@@ -22,7 +22,11 @@ class PlayitManager {
     this.javaAddress = '';
     this.bedrockAddress = '';
     this.bedrockPort = '19132';
-    this.configPath = path.join(__dirname, 'playit-config.json');
+    const appRoot = (process.execPath && !process.execPath.endsWith('node.exe') && !process.execPath.endsWith('node'))
+      ? path.dirname(process.execPath)
+      : __dirname;
+    this.appRoot = appRoot;
+    this.configPath = path.join(appRoot, 'playit-config.json');
 
     this.loadSavedConfig();
   }
@@ -114,7 +118,7 @@ class PlayitManager {
     const binaryName = isWindows ? 'playit.exe' : 'playit';
 
     // 1. Check local tools folder
-    const localExe = path.join(__dirname, 'tools', binaryName);
+    const localExe = path.join(this.appRoot, 'tools', binaryName);
     if (fs.existsSync(localExe)) return localExe;
 
     // 2. Check standard installation path
@@ -146,7 +150,7 @@ class PlayitManager {
     const isWindows = process.platform === 'win32';
     const isArm = process.arch === 'arm64';
     const binaryName = isWindows ? 'playit.exe' : 'playit';
-    const toolsDir = path.join(__dirname, 'tools');
+    const toolsDir = path.join(this.appRoot, 'tools');
 
     if (!fs.existsSync(toolsDir)) {
       await fs.promises.mkdir(toolsDir, { recursive: true });

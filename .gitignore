@@ -1,3 +1,8 @@
+# Binaries & Bundles
+CraftOrbit.exe
+*.blob
+dist-bundle.js
+
 # Dependencies
 node_modules/
 

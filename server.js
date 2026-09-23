@@ -9,13 +9,18 @@ const StorageManager = require('./storage-manager');
 const WorldProvisioner = require('./world-provisioner');
 const PlayitManager = require('./playit-manager');
 const { pingMinecraft } = require('./server-ping');
+const DesktopWindow = require('./desktop-window');
+const { ensurePublicAssets } = require('./embedded-assets');
 
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 const PORT = process.env.PORT || 3000;
-const CONFIG_FILE = path.join(__dirname, 'dashboard-config.json');
+const appRoot = (process.execPath && !process.execPath.endsWith('node.exe') && !process.execPath.endsWith('node'))
+  ? path.dirname(process.execPath)
+  : __dirname;
+const CONFIG_FILE = path.join(appRoot, 'dashboard-config.json');
 
 // Helper to load registry
 function loadRegistry() {
@@ -135,7 +140,12 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.static(path.join(__dirname, 'public')));
+ensurePublicAssets(appRoot);
+const publicFolder = fs.existsSync(path.join(appRoot, 'public')) 
+  ? path.join(appRoot, 'public') 
+  : path.join(__dirname, 'public');
+
+app.use(express.static(publicFolder));
 
 function getLocalIpAddress() {
   const ifaces = os.networkInterfaces();
@@ -1414,4 +1424,18 @@ server.listen(PORT, () => {
   console.log(`📂 Active Server: [${activeInstance.name}]`);
   console.log(`📁 Directory: ${activeInstance.path}`);
   console.log(`=======================================================`);
+
+  // Launch Standalone Desktop App Window (Non-browser experience)
+  DesktopWindow.launch(PORT, async () => {
+    console.log('[CraftOrbit] GUI closed by user. Cleaning up...');
+    try {
+      if (mc && mc.status === 'online') {
+        await mc.stop();
+      }
+      if (playit) {
+        playit.stop();
+      }
+    } catch (e) {}
+    process.exit(0);
+  });
 });
