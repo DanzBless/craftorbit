@@ -376,3 +376,59 @@ input:focus, select:focus, textarea:focus {
   display: none !important;
 }
 
+/* ==========================================================================
+   Smooth Micro-Transitions & Quality-of-Life Enhancements
+   ========================================================================== */
+
+@keyframes viewFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+section[id^="view-"]:not(.hidden) {
+  animation: viewFadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalBackdropFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalContentZoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-overlay:not(.hidden),
+div[id$="Modal"]:not(.hidden) {
+  animation: modalBackdropFadeIn 0.15s ease-out forwards;
+}
+
+.modal-overlay:not(.hidden) > div,
+div[id$="Modal"]:not(.hidden) > div {
+  animation: modalContentZoomIn 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Accessible reduced-motion query */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+

@@ -2856,6 +2856,13 @@ const paletteActions = [
   { id: 'diagnose', title: 'Run AI Server Diagnosis', cat: 'AI Copilot', icon: 'stethoscope', run: () => runQuickDiagnosis() },
   { id: 'import-pack', title: 'Import Modpack (.zip)', cat: 'Mods', icon: 'archive', run: () => openImportModpackModal() },
   { id: 'mod-store', title: 'Browse Mod Store (Modrinth)', cat: 'Mods', icon: 'store', run: () => { switchTab('mods'); switchModSubtab('store'); } },
+  { id: 'toggle-layout', title: 'Toggle Layout (Sidebar / Topbar)', cat: 'Interface', icon: 'layout', run: () => toggleLayoutMode() },
+  { id: 'nav-dashboard', title: 'Go to Overview Dashboard', cat: 'Navigation', icon: 'layout-dashboard', run: () => switchTab('dashboard') },
+  { id: 'nav-console', title: 'Go to Live Console', cat: 'Navigation', icon: 'terminal', run: () => switchTab('console') },
+  { id: 'nav-files', title: 'Go to File Manager', cat: 'Navigation', icon: 'folder', run: () => switchTab('files') },
+  { id: 'nav-mods', title: 'Go to Mod Manager', cat: 'Navigation', icon: 'package', run: () => switchTab('mods') },
+  { id: 'nav-storage', title: 'Go to Backups & Storage', cat: 'Navigation', icon: 'database', run: () => switchTab('storage') },
+  { id: 'nav-settings', title: 'Go to Server Settings', cat: 'Navigation', icon: 'sliders', run: () => switchTab('settings') },
   { id: 'shutdown', title: 'Shutdown Dashboard & Exit', cat: 'System', icon: 'power', run: () => shutdownDashboard() }
 ];
 
@@ -2965,9 +2972,31 @@ function runPaletteAction(id) {
 
 // Global Keyboard Shortcuts
 document.addEventListener('keydown', (e) => {
+  const isInput = ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName);
+
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
     e.preventDefault();
     openCommandPalette();
+  } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
+    e.preventDefault();
+    toggleLayoutMode();
+  } else if (e.altKey && !isNaN(e.key) && Number(e.key) >= 1 && Number(e.key) <= 9) {
+    e.preventDefault();
+    const tabList = ['dashboard', 'console', 'settings', 'ai', 'files', 'mods', 'storage', 'playit', 'players'];
+    const targetTab = tabList[Number(e.key) - 1];
+    if (targetTab) switchTab(targetTab);
+  } else if (e.key === '/' && !isInput && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    e.preventDefault();
+    if (currentTab === 'dashboard') {
+      const input = document.getElementById('dashCommandInput');
+      if (input) { input.focus(); input.select(); }
+    } else {
+      switchTab('console');
+      setTimeout(() => {
+        const input = document.getElementById('fullConsoleInput');
+        if (input) { input.focus(); input.select(); }
+      }, 50);
+    }
   } else if (e.key === 'Escape') {
     closeCommandPalette();
     closeAutoEggModal();
