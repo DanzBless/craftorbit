@@ -14,19 +14,21 @@ Featuring automated server engine downloading (**Forge, NeoForge, Fabric, Paper,
 
 ## ⚡ Quick Start
 
-### 📋 Prerequisites
-1. **Node.js** (v18 or newer): Download from [nodejs.org](https://nodejs.org/).
-2. **Java Runtime**: CraftOrbit automatically scans and selects your installed Java runtime (`Java 8`, `Java 17`, `Java 21`, or `Java 25` for Minecraft 26.x).
-
-### 🚀 1-Click Launch (Windows)
-1. Download **`CraftOrbit-v1.3.0-Windows.zip`** from [Releases](https://github.com/DanzBless/craftorbit/releases/latest).
+### 🚀 Option A: Standalone Desktop App (Windows — No Node.js Required)
+1. Download **`CraftOrbit-v1.3.0-Windows-Standalone.zip`** from [Releases](https://github.com/DanzBless/craftorbit/releases/latest).
 2. Extract the archive anywhere on your PC.
-3. Double-click **`setup.bat`** (or `start.bat`).
-4. Dashboard opens automatically: 👉 **`http://localhost:3000`**
+3. Double-click **`CraftOrbit.exe`**.
+4. A dedicated Chromium application window launches immediately with zero setup required.
+
+### 📦 Option B: Standard Portable Package (Windows)
+1. Ensure **Node.js** (v18+) and Java Runtime are installed.
+2. Download **`CraftOrbit-v1.3.0-Windows.zip`** from [Releases](https://github.com/DanzBless/craftorbit/releases/latest).
+3. Extract and double-click **`setup.bat`** (or `start.bat`).
+4. Dashboard opens in browser: 👉 **`http://localhost:3000`**
 
 *(Optional: Double-click `start-silent.vbs` to run CraftOrbit hidden in the background without keeping a CMD window open).*
 
-### 🐧 Linux / Ubuntu Server (CLI & 24/7 Hosting)
+### 🐧 Option C: Linux / Ubuntu Server (CLI & 24/7 Hosting)
 1. Download or clone on your Ubuntu machine:
    ```bash
    wget https://github.com/DanzBless/craftorbit/releases/download/v1.3.0/CraftOrbit-v1.3.0-Linux-Server.tar.gz
@@ -55,17 +57,19 @@ Featuring automated server engine downloading (**Forge, NeoForge, Fabric, Paper,
 
 | Feature | Description |
 | :--- | :--- |
+| 🖥️ **Standalone Desktop GUI** | Bundled Windows executable (`CraftOrbit.exe`) running via Node SEA + Chromium App mode. Zero runtime dependencies or browser clutter. |
 | 🎮 **Auto-Egg Provisioner** | 1-click server creation. Automatically downloads the official `.jar` for **Forge**, **NeoForge**, **Fabric**, **Paper**, or **Vanilla** directly from official APIs. |
 | 🌍 **Global Tunneling (playit.gg)** | Host public games without touching router NAT/firewalls or leaking your home IP address. Supports separate dual tunnels for PC and Mobile. |
 | 📱 **Java + Bedrock Cross-Play** | Auto-installs **Geyser** and **Floodgate** so friends on Android, iOS, Xbox, PlayStation, and Switch can join your Java Paper server on port `19132`. |
 | 📦 **Modrinth Mod & Pack Store** | Search and install mods directly from the Modrinth catalog with 1 click. Includes `.zip` modpack importer for CurseForge/Modrinth server packs. |
 | ⏱️ **Real-Time Telemetry & SLP** | Live RAM/CPU charts, native Server List Ping (latency ms & player count), and automated 10-minute world saves (`/save-all`). |
 | 🔄 **1-Click Disaster Recovery** | Full world backup creation (`.zip`) with an instant 1-click restore button. |
-| 🖥️ **Dual Navigation Layouts** | Switch between an **Argonara / Pterodactyl-style Left Sidebar** and a **Minimalist Topbar** anytime with preference persistence. |
+| 🏛️ **Argonara Sidebar Workspace** | Full-height Pterodactyl-style left navigation. Decluttered header with live breadcrumbs and active server switching. |
+| 🎨 **Obsidian Monochrome Theme** | High-contrast, zero-distraction dark aesthetic with strictly functional emerald (online) and rose (offline) states. |
+| ⚡ **Production Hardened & UX Polish** | Skeleton loaders eliminate layout shifts (CLS), optimistic updates provide instant feedback (<50ms), and strict security headers prevent CSRF and path traversal. |
+| 👥 **Active Players & Operations** | Overview dashboard displays online player heads, one-click world shortcuts (day/night/clear/save), and an in-game broadcast announcer. |
+| ⌨️ **Command Palette & Hotkeys** | Press `Ctrl + K` for spotlight actions, `Alt + 1..9` to jump to tabs, `/` to focus console, and `Esc` to close modals. |
 | 🌐 **Multi-Language (i18n)** | Native English display language with 1-click Language Switcher (English US & Bahasa Indonesia). |
-| 📊 **Server Hero Card** | Real-time workspace banner with animated CPU, RAM, and Disk storage progress meters and quick control triggers. |
-| ⌨️ **Spotlight Command Palette** | Press `Ctrl + K` anywhere to trigger server actions, set world time, clear ground lag, and run console commands. |
-| 🔒 **Security Hardened** | Protected against Cross-Site Request Forgery (CSRF/CSWSH), path traversal (CWE-22), and shell command injection. |
 
 ---
 
