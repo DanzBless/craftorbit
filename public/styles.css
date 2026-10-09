@@ -6,7 +6,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 :root {
-  /* Surface & Background System */
+  /* Surface & Background System — Obsidian Monochrome */
   --bg-main: #07090e;
   --bg-surface: #0a0d14;
   --bg-card: rgba(13, 17, 26, 0.75);
@@ -16,19 +16,16 @@
   /* Border System */
   --border-subtle: rgba(255, 255, 255, 0.07);
   --border-light: rgba(255, 255, 255, 0.14);
-  --border-focus: rgba(56, 189, 248, 0.5);
+  --border-focus: rgba(255, 255, 255, 0.4);
 
   /* Typography Colors */
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
 
-  /* Accent Glow Palette */
-  --accent-cyan: #38bdf8;
-  --accent-emerald: #10b981;
-  --accent-indigo: #818cf8;
-  --accent-amber: #f59e0b;
-  --accent-rose: #f43f5e;
+  /* Strict Functional State Palette: 90% monochrome, 2 functional accents */
+  --accent-running: #10b981; /* Emerald = Online / Active */
+  --accent-stopped: #f43f5e; /* Rose = Offline / Error */
 }
 
 /* Base Body Styling */
@@ -37,10 +34,8 @@ body {
   color: var(--text-primary) !important;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-image: 
-    radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.04) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.04) 0px, transparent 50%),
-    radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 28px 28px;
+    radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 28px 28px;
   background-attachment: fixed;
 }
 
@@ -273,8 +268,8 @@ textarea {
 }
 input:focus, select:focus, textarea:focus {
   outline: none !important;
-  border-color: var(--accent-cyan) !important;
-  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.08) !important;
 }
 
 /* Quick Status Badges */
@@ -295,7 +290,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 /* ==========================================================================
-   Left Sidebar Navigation Layout (Argonara / Pterodactyl Style)
+   Left Sidebar Navigation (Standard Dedicated Layout)
    ========================================================================== */
 .sidebar-tab-btn {
   color: #94a3b8;
@@ -313,66 +308,17 @@ input:focus, select:focus, textarea:focus {
 }
 .sidebar-tab-btn.active {
   color: #ffffff !important;
-  background-color: rgba(56, 189, 248, 0.12) !important;
-  border-color: rgba(56, 189, 248, 0.3) !important;
-  box-shadow: 0 0 20px rgba(56, 189, 248, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
   font-weight: 600;
 }
 .sidebar-tab-btn.active i {
-  color: #38bdf8 !important;
+  color: #ffffff !important;
 }
 
-/* Mode Switch Layout Specifics (Decluttered & Non-Redundant) */
-#appShell.mode-sidebar #leftSidebar {
-  display: flex !important;
-}
-#appShell.mode-sidebar #topNavTabs {
-  display: none !important;
-}
-#appShell.mode-sidebar #headerBrandSwitcher {
-  display: none !important;
-}
-#appShell.mode-sidebar #headerBreadcrumb {
-  display: flex !important;
-}
-#appShell.mode-sidebar #headerPowerActions {
-  display: none !important;
-}
-#appShell.mode-sidebar #statusBadge {
-  display: none !important;
-}
-#appShell.mode-sidebar #headerCmdPalette {
-  display: none !important;
-}
-#appShell.mode-sidebar #hardwareMetersRow {
-  display: none !important;
-}
-
-#appShell.mode-topbar #leftSidebar {
-  display: none !important;
-}
-#appShell.mode-topbar #topNavTabs {
-  display: flex !important;
-}
-#appShell.mode-topbar #headerBrandSwitcher {
-  display: flex !important;
-}
-#appShell.mode-topbar #headerBreadcrumb {
-  display: none !important;
-}
-#appShell.mode-topbar #headerPowerActions {
-  display: flex !important;
-}
-#appShell.mode-topbar #statusBadge {
-  display: flex !important;
-}
-#appShell.mode-topbar #headerCmdPalette {
-  display: flex !important;
-}
-#appShell.mode-topbar #hardwareMetersRow {
-  display: grid !important;
-}
-#appShell.mode-topbar #serverHeroCard {
+/* Hide deprecated topbar meters when present */
+#hardwareMetersRow {
   display: none !important;
 }
 

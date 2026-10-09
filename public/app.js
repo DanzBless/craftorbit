@@ -128,30 +128,10 @@ function switchTab(tabId) {
 
   tabs.forEach(t => {
     const view = document.getElementById(`view-${t}`);
-    const btn = document.getElementById(`tab-${t}`);
     const sideBtn = document.getElementById(`side-tab-${t}`);
 
-    if (view) {
-      if (t === tabId) {
-        view.classList.remove('hidden');
-      } else {
-        view.classList.add('hidden');
-      }
-    }
-    if (btn) {
-      if (t === tabId) {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
-      }
-    }
-    if (sideBtn) {
-      if (t === tabId) {
-        sideBtn.classList.add('active');
-      } else {
-        sideBtn.classList.remove('active');
-      }
-    }
+    if (view) view.classList.toggle('hidden', t !== tabId);
+    if (sideBtn) sideBtn.classList.toggle('active', t === tabId);
   });
 
   // Update Breadcrumb Title in Sidebar Mode
@@ -349,8 +329,8 @@ function connectWebSocket() {
       } else if (msg.type === 'logs_history') {
         const miniScreen = document.getElementById('dashMiniConsole');
         const fullScreen = document.getElementById('fullConsoleScreen');
-        miniScreen.innerHTML = '';
-        fullScreen.innerHTML = '';
+        if (miniScreen) miniScreen.innerHTML = '';
+        if (fullScreen) fullScreen.innerHTML = '';
         msg.data.forEach(renderLogLine);
       } else if (msg.type === 'status') {
         updateServerStatusUI(msg.data);
@@ -392,15 +372,17 @@ function renderLogLine(logEntry) {
     logClass = 'log-dash';
   }
 
-  // Mini console
-  const miniLine = document.createElement('div');
-  miniLine.className = `log-line ${logClass} truncate`;
-  miniLine.textContent = text;
-  miniScreen.appendChild(miniLine);
-  if (miniScreen.children.length > 60) {
-    miniScreen.removeChild(miniScreen.firstChild);
+  // Mini console (if present)
+  if (miniScreen) {
+    const miniLine = document.createElement('div');
+    miniLine.className = `log-line ${logClass} truncate`;
+    miniLine.textContent = text;
+    miniScreen.appendChild(miniLine);
+    if (miniScreen.children.length > 60) {
+      miniScreen.removeChild(miniScreen.firstChild);
+    }
+    miniScreen.scrollTop = miniScreen.scrollHeight;
   }
-  miniScreen.scrollTop = miniScreen.scrollHeight;
 
   // Full console
   const fullLine = document.createElement('div');
@@ -516,6 +498,21 @@ function updateServerStatusUI(data) {
   if (data.players) {
     document.getElementById('onlinePlayersCount').innerHTML = `${data.players.length} <span class="text-xs font-normal text-slate-500">/ 5 max</span>`;
     document.getElementById('onlinePlayersList').textContent = data.players.length > 0 ? data.players.join(', ') : 'No players connected';
+
+    const chipsContainer = document.getElementById('dashActivePlayersChips');
+    if (chipsContainer) {
+      if (data.players.length > 0) {
+        chipsContainer.innerHTML = data.players.map(p => `
+          <div class="flex items-center gap-1.5 px-2 py-1 rounded bg-neutral-900 border border-[#2a2a2a] text-xs font-mono">
+            <img src="https://mc-heads.net/avatar/${encodeURIComponent(p)}/18" class="w-4 h-4 rounded" onerror="this.src='https://mc-heads.net/avatar/Steve/18'">
+            <span class="text-white">${p}</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+          </div>
+        `).join('');
+      } else {
+        chipsContainer.innerHTML = `<span class="text-xs text-neutral-500 font-mono italic">No players connected currently</span>`;
+      }
+    }
   }
 
   // RAM configuration max
@@ -624,10 +621,10 @@ function updateTelemetryUI(telemetry) {
 
 // Copy Server IP
 function copyServerIp() {
-  const ipText = document.getElementById('headerServerIp').textContent;
+  const ipText = document.getElementById('heroServerIpDisplay')?.textContent || document.getElementById('headerServerIp')?.textContent || 'localhost:25402';
   navigator.clipboard.writeText(ipText).then(() => {
     playSound('cmd');
-    showToast('Server IP copied to clipboard! (localhost:25402)', 'success');
+    showToast(`Server IP copied to clipboard! (${ipText})`, 'success');
   });
 }
 
@@ -1737,88 +1734,9 @@ window.addEventListener('click', (e) => {
   }
 });
 
-// ================= LAYOUT MODE SWITCHER (SIDEBAR vs TOPBAR) =================
-let currentLayoutMode = localStorage.getItem('craftorbit_layout_mode') || 'sidebar';
-
-function initLayoutMode() {
-  setLayoutMode(currentLayoutMode, false);
-}
-
-function toggleLayoutMode() {
-  const newMode = currentLayoutMode === 'sidebar' ? 'topbar' : 'sidebar';
-  setLayoutMode(newMode, true);
-}
-
-function setLayoutMode(mode, showNotification = true) {
-  currentLayoutMode = mode;
-  localStorage.setItem('craftorbit_layout_mode', mode);
-
-  const appShell = document.getElementById('appShell');
-  const headerLayoutLabel = document.getElementById('headerLayoutLabel');
-  const layoutModeLabel = document.getElementById('layoutModeLabel');
-  const cardSidebar = document.getElementById('layoutCardSidebar');
-  const cardTopbar = document.getElementById('layoutCardTopbar');
-  const checkSidebar = document.getElementById('layoutCheckSidebar');
-  const checkTopbar = document.getElementById('layoutCheckTopbar');
-
-  if (appShell) {
-    if (mode === 'sidebar') {
-      appShell.classList.add('mode-sidebar');
-      appShell.classList.remove('mode-topbar');
-    } else {
-      appShell.classList.add('mode-topbar');
-      appShell.classList.remove('mode-sidebar');
-    }
-  }
-
-  if (headerLayoutLabel) {
-    headerLayoutLabel.textContent = mode === 'sidebar' ? 'Sidebar Mode' : 'Top Bar Mode';
-  }
-  if (layoutModeLabel) {
-    layoutModeLabel.textContent = mode === 'sidebar' ? 'Sidebar' : 'Top Bar';
-  }
-
-  if (cardSidebar && cardTopbar) {
-    if (mode === 'sidebar') {
-      cardSidebar.classList.add('border-emerald-500', 'bg-[#0f181f]');
-      cardSidebar.classList.remove('border-[#2e2e2e]', 'bg-black');
-      if (checkSidebar) {
-        checkSidebar.textContent = 'ACTIVE';
-        checkSidebar.className = 'text-emerald-400 text-xs font-mono font-bold';
-      }
-      cardTopbar.classList.remove('border-emerald-500', 'bg-[#0f181f]');
-      cardTopbar.classList.add('border-[#2e2e2e]', 'bg-black');
-      if (checkTopbar) {
-        checkTopbar.textContent = 'SELECT';
-        checkTopbar.className = 'text-neutral-500 text-xs font-mono';
-      }
-    } else {
-      cardTopbar.classList.add('border-emerald-500', 'bg-[#0f181f]');
-      cardTopbar.classList.remove('border-[#2e2e2e]', 'bg-black');
-      if (checkTopbar) {
-        checkTopbar.textContent = 'ACTIVE';
-        checkTopbar.className = 'text-emerald-400 text-xs font-mono font-bold';
-      }
-      cardSidebar.classList.remove('border-emerald-500', 'bg-[#0f181f]');
-      cardSidebar.classList.add('border-[#2e2e2e]', 'bg-black');
-      if (checkSidebar) {
-        checkSidebar.textContent = 'SELECT';
-        checkSidebar.className = 'text-neutral-500 text-xs font-mono';
-      }
-    }
-  }
-
-  if (window.lucide) lucide.createIcons();
-
-  if (showNotification) {
-    showToast(mode === 'sidebar' ? 'Switched to Left Sidebar Navigation' : 'Switched to Top Navigation Bar', 'info');
-  }
-}
-
 // Initial Load
 window.addEventListener('DOMContentLoaded', () => {
   initLanguage();
-  initLayoutMode();
   initTelemetryCharts();
   connectWebSocket();
   loadInstances();
@@ -1852,9 +1770,10 @@ async function loadInstances() {
     const heroIp = document.getElementById('heroServerIpDisplay');
 
     if (activeInstanceData && activeInstanceData.id !== 'none') {
-      document.getElementById('headerInstanceName').textContent = activeInstanceData.name;
+      const headerInst = document.getElementById('headerInstanceName');
+      if (headerInst) headerInst.textContent = activeInstanceData.name;
       const typeBadge = document.getElementById('headerInstanceTypeBadge');
-      typeBadge.textContent = activeInstanceData.detectedEngine || activeInstanceData.type.toUpperCase();
+      if (typeBadge) typeBadge.textContent = activeInstanceData.detectedEngine || activeInstanceData.type.toUpperCase();
       
       if (sideName) sideName.textContent = activeInstanceData.name;
       if (sideBadge) sideBadge.textContent = activeInstanceData.detectedEngine || activeInstanceData.type.toUpperCase();
@@ -1862,22 +1781,30 @@ async function loadInstances() {
       if (heroBadge) heroBadge.textContent = activeInstanceData.detectedEngine || activeInstanceData.type.toUpperCase();
 
       const folderName = activeInstanceData.path.split(/[/\\]/).pop();
-      document.getElementById('headerServerFolder').textContent = folderName;
-      document.getElementById('headerServerFolder').title = activeInstanceData.path;
+      const folderEl = document.getElementById('headerServerFolder');
+      if (folderEl) {
+        folderEl.textContent = folderName;
+        folderEl.title = activeInstanceData.path;
+      }
 
-      // Update port in header if known
+      // Update port if known
       const port = activeInstanceData.port || (activeInstanceData.type === 'bedrock' ? 19132 : 25402);
-      document.getElementById('headerServerIp').textContent = `localhost:${port}`;
+      const headerIp = document.getElementById('headerServerIp');
+      if (headerIp) headerIp.textContent = `localhost:${port}`;
       if (heroIp) heroIp.textContent = `localhost:${port}`;
     } else {
-      document.getElementById('headerInstanceName').textContent = 'No Server Selected';
-      document.getElementById('headerInstanceTypeBadge').textContent = 'START';
+      const headerInst = document.getElementById('headerInstanceName');
+      if (headerInst) headerInst.textContent = 'No Server Selected';
+      const typeBadge = document.getElementById('headerInstanceTypeBadge');
+      if (typeBadge) typeBadge.textContent = 'START';
       if (sideName) sideName.textContent = 'No Server Selected';
       if (sideBadge) sideBadge.textContent = 'START';
       if (heroName) heroName.textContent = 'No Server Selected';
       if (heroBadge) heroBadge.textContent = 'STANDBY';
-      document.getElementById('headerServerFolder').textContent = 'Click Host World to begin';
-      document.getElementById('headerServerIp').textContent = 'localhost:25565';
+      const folderEl = document.getElementById('headerServerFolder');
+      if (folderEl) folderEl.textContent = 'Click Host World to begin';
+      const headerIp = document.getElementById('headerServerIp');
+      if (headerIp) headerIp.textContent = 'localhost:25565';
       if (heroIp) heroIp.textContent = 'localhost:25565';
     }
 
@@ -2770,7 +2697,9 @@ function copyShareInvite() {
 
 async function broadcastServerAnnouncement(e) {
   if (e) e.preventDefault();
-  const input = document.getElementById('serverBroadcastInput');
+  const dashInput = document.getElementById('dashBroadcastInput');
+  const rosterInput = document.getElementById('serverBroadcastInput');
+  const input = (dashInput?.value.trim() ? dashInput : rosterInput) || dashInput;
   const msg = input?.value.trim();
   if (!msg) return;
 
@@ -2868,7 +2797,6 @@ const paletteActions = [
   { id: 'diagnose', title: 'Run AI Server Diagnosis', cat: 'AI Copilot', icon: 'stethoscope', run: () => runQuickDiagnosis() },
   { id: 'import-pack', title: 'Import Modpack (.zip)', cat: 'Mods', icon: 'archive', run: () => openImportModpackModal() },
   { id: 'mod-store', title: 'Browse Mod Store (Modrinth)', cat: 'Mods', icon: 'store', run: () => { switchTab('mods'); switchModSubtab('store'); } },
-  { id: 'toggle-layout', title: 'Toggle Layout (Sidebar / Topbar)', cat: 'Interface', icon: 'layout', run: () => toggleLayoutMode() },
   { id: 'nav-dashboard', title: 'Go to Overview Dashboard', cat: 'Navigation', icon: 'layout-dashboard', run: () => switchTab('dashboard') },
   { id: 'nav-console', title: 'Go to Live Console', cat: 'Navigation', icon: 'terminal', run: () => switchTab('console') },
   { id: 'nav-files', title: 'Go to File Manager', cat: 'Navigation', icon: 'folder', run: () => switchTab('files') },
@@ -2989,9 +2917,6 @@ document.addEventListener('keydown', (e) => {
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
     e.preventDefault();
     openCommandPalette();
-  } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
-    e.preventDefault();
-    toggleLayoutMode();
   } else if (e.altKey && !isNaN(e.key) && Number(e.key) >= 1 && Number(e.key) <= 9) {
     e.preventDefault();
     const tabList = ['dashboard', 'console', 'settings', 'ai', 'files', 'mods', 'storage', 'playit', 'players'];
@@ -2999,16 +2924,11 @@ document.addEventListener('keydown', (e) => {
     if (targetTab) switchTab(targetTab);
   } else if (e.key === '/' && !isInput && !e.ctrlKey && !e.metaKey && !e.altKey) {
     e.preventDefault();
-    if (currentTab === 'dashboard') {
-      const input = document.getElementById('dashCommandInput');
+    switchTab('console');
+    setTimeout(() => {
+      const input = document.getElementById('fullConsoleInput');
       if (input) { input.focus(); input.select(); }
-    } else {
-      switchTab('console');
-      setTimeout(() => {
-        const input = document.getElementById('fullConsoleInput');
-        if (input) { input.focus(); input.select(); }
-      }, 50);
-    }
+    }, 50);
   } else if (e.key === 'Escape') {
     closeCommandPalette();
     closeAutoEggModal();
