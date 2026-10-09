@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
@@ -143,6 +143,11 @@
     /* Terminal Prompt Blink */
     @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
     .animate-blink { animation: blink 1s infinite; }
+
+    /* Base FOUC prevention & image sizing guards */
+    body { background-color: #06070a !important; color: #e2e8f0; margin: 0; }
+    img { max-width: 100%; height: auto; }
+    header img { width: 36px !important; height: 36px !important; max-width: 36px !important; max-height: 36px !important; }
   </style>
 </head>
 <body class="bg-[#06070a] text-neutral-200 font-sans antialiased selection:bg-white selection:text-black min-h-screen relative overflow-x-hidden">
@@ -161,7 +166,7 @@
       
       <!-- Brand Logo -->
       <a href="#top" class="flex items-center gap-3 group">
-        <img src="logo.svg" alt="CraftOrbit" class="w-9 h-9 object-contain drop-shadow-[0_0_15px_rgba(56,189,248,0.4)] transition group-hover:scale-105">
+        <img src="logo.svg" alt="CraftOrbit" width="36" height="36" class="w-9 h-9 object-contain drop-shadow-[0_0_15px_rgba(56,189,248,0.4)] transition group-hover:scale-105">
         <div class="flex items-center gap-2">
           <span class="font-bold text-base tracking-tight text-white">CraftOrbit</span>
           <span class="text-[10px] uppercase font-mono tracking-wider px-2 py-0.5 rounded bg-[#161c26] border border-[#273244] text-neutral-400">Server Manager</span>
@@ -689,7 +694,7 @@
         <!-- Console Header -->
         <div class="h-10 border-b border-[#1b2332] bg-[#07090e] px-4 flex items-center justify-between">
           <span class="text-xs font-mono text-neutral-400 flex items-center gap-2">
-            <img src="logo.svg" alt="" class="w-4 h-4 object-contain">
+            <img src="logo.svg" alt="" width="16" height="16" class="w-4 h-4 object-contain">
             <span>CRAFTORBIT // ORCHESTRATION PIPELINE</span>
           </span>
           <span class="text-[11px] font-mono text-neutral-400">4 WORKSPACES</span>
@@ -988,7 +993,7 @@
       <!-- Col 1: Brand & Disclaimer -->
       <div class="md:col-span-2 space-y-3">
         <div class="flex items-center gap-2.5">
-          <img src="logo.svg" alt="CraftOrbit" class="w-6 h-6 object-contain">
+          <img src="logo.svg" alt="CraftOrbit" width="24" height="24" class="w-6 h-6 object-contain">
           <span class="font-bold text-sm text-white tracking-tight">CraftOrbit</span>
         </div>
         <p class="text-neutral-400 text-xs leading-relaxed max-w-sm">
