@@ -121,8 +121,12 @@ function isSafeSubpath(baseDir, targetPath) {
 
 app.use(express.json());
 
-// Security: Cross-Site Request Forgery (CSRF) & DNS-Rebinding Protection
+// Security: Headers & Cross-Site Protection
 app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+
   if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) {
     const origin = req.headers.origin;
     const host = req.headers.host;

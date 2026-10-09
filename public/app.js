@@ -1054,6 +1054,13 @@ function filterModsList() {
 }
 
 async function toggleMod(fileName) {
+  // Optimistic UI state
+  const mod = cachedMods.find(m => m.name === fileName);
+  if (mod) {
+    mod.enabled = !mod.enabled;
+    renderModsTable(cachedMods);
+  }
+
   try {
     playSound('cmd');
     const res = await fetch('/api/mods/toggle', {
@@ -1067,6 +1074,11 @@ async function toggleMod(fileName) {
     showToast(`Mod ${data.enabled ? 'enabled' : 'disabled'}: ${data.newName}`, 'success');
     loadModsList();
   } catch (e) {
+    // Rollback optimistic state
+    if (mod) {
+      mod.enabled = !mod.enabled;
+      renderModsTable(cachedMods);
+    }
     showToast(`Error: ${e.message}`, 'error');
   }
 }
